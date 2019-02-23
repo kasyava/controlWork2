@@ -24,6 +24,7 @@ const router = express.Router();
 
 router.get("/", (req, res) => {
     if(req.query.news_id){
+        console.log(req.query.news_id);
         Comments.find({newsId: req.query.news_id})
             .then( results => res.send(results))
             .catch(e => res.send(e).status(500))
@@ -56,7 +57,7 @@ router.post("/", auth, upload.none(), async  (req, res) => {
 });
 
 router.delete("/:id", [auth, permit('admin')], (req, res) => {
-
+    console.log(req.params.id);
     Comments.deleteOne({_id: req.params.id})
         .then(result => res.send(result))
         .catch((e) => res.send(e).status(500));

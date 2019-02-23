@@ -53,13 +53,13 @@ router.post("/", auth, upload.single("photo"), async  (req, res) => {
 
 });
 
-router.delete("/:id", [auth, permit('admin')], async (req, res) => {
+router.delete("/:id", [auth, permit('admin')], (req, res) => {
 
     News.deleteOne({_id: req.params.id})
-        .then(() => {
+        .then((result) => {
 
-         Comments.delete({newsId: req.params.id})
-             .then(resultC => res.send(resultC))
+         Comments.deleteMany({newsId: req.params.id})
+             .then(resultComment => res.send({result, resultComment}))
              .catch((e) => res.send(e).status(500));
         })
         .catch((e) => res.send(e).status(500));
