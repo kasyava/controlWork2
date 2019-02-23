@@ -9,7 +9,8 @@ const CommentSchema = new Schema({
     },
     author: {
         type: String,
-        default: 'Anonymous'
+        default: 'Anonymous',
+        required: false
     },
     comment: {
         type: String,

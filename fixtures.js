@@ -4,6 +4,7 @@ const config = require('./config');
 
 const User = require('./models/User');
 const News = require('./models/News');
+const Comment = require('./models/Comment');
 
 
 mongoose.set('useCreateIndex', true);
@@ -21,7 +22,14 @@ db.once('open', async () => {
         console.log('Collection Users where not present, skipping drop...');
     }
     try{
-        await db.dropCollection('photos');
+        await db.dropCollection('news');
+
+    }
+    catch (e) {
+        console.log('Collection Photos where not present, skipping drop...');
+    }
+    try{
+        await db.dropCollection('comments');
 
     }
     catch (e) {
@@ -44,7 +52,7 @@ db.once('open', async () => {
     console.log('Users created');
 
 
-    const news = await News.create({
+    const [news1, news2, news3, news4 ]= await News.create({
         title: 'test news 1',
         content: 'content for test news 1',
         image: 'noimage.jpeg',
@@ -66,6 +74,39 @@ db.once('open', async () => {
         date: new Date()
     });
     console.log('News created');
+
+    const comment = await Comment.create({
+        newsId: news1._id,
+        comment: "comment1 for news 1"
+    },{
+        newsId: news1._id,
+        comment: "comment2 for news 1",
+        author: admin.username
+    },{
+        newsId: news2._id,
+        comment: "comment1 for news 2"
+    },{
+        newsId: news2._id,
+        comment: "comment2 for news 2",
+        author: user.username
+    },{
+        newsId: news3._id,
+        comment: "comment1 for news 3"
+    },{
+        newsId: news3._id,
+        comment: "comment2 for news 3",
+    },{
+        newsId: news4._id,
+        comment: "comment1 for news 4",
+        author: user.username
+    },{
+        newsId: news4._id,
+        comment: "comment2 for news 4",
+        author: admin.username
+    });
+    console.log('Comments created');
+
+
 
     db.close();
 

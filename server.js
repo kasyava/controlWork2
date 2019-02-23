@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 
 const users = require("./app/users");
 const news = require("./app/news");
+const comments = require("./app/comments");
 
 
 const config =  require("./config");
@@ -26,6 +27,7 @@ db.once('open', () => {
 
     app.use('/users', users);
     app.use('/news', news);
+    app.use('/comments', comments);
 
     app.listen(port, () => console.log(`Server started on ${port} port`));
 });
