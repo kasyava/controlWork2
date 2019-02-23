@@ -5,6 +5,7 @@ const nanoid = require("nanoid");
 
 const config = require("../config");
 const News = require("../models/News");
+const Comments = require("../models/Comment");
 
 const auth = require("../middlewares/auth");
 const permit = require("../middlewares/permit");
@@ -52,10 +53,15 @@ router.post("/", auth, upload.single("photo"), async  (req, res) => {
 
 });
 
-router.delete("/:id", [auth, permit('admin')], (req, res) => {
+router.delete("/:id", [auth, permit('admin')], async (req, res) => {
 
     News.deleteOne({_id: req.params.id})
-        .then(result => res.send(result))
+        .then(() => {
+
+         Comments.delete({newsId: req.params.id})
+             .then(resultC => res.send(resultC))
+             .catch((e) => res.send(e).status(500));
+        })
         .catch((e) => res.send(e).status(500));
 });
 
