@@ -35,9 +35,10 @@ router.get("/:id", (req, res) => {
         .catch(e => res.send(e).status(500))
 });
 
-router.post("/", auth, upload.single("photo"), async  (req, res) => {
+router.post("/", auth, upload.single("image"), async  (req, res) => {
 
     const data = req.body;
+    console.log(data);
 
     if (req.file) data.image = req.file.filename;
 
@@ -45,7 +46,7 @@ router.post("/", auth, upload.single("photo"), async  (req, res) => {
         res.status(400).send("no data");
         return;
     }
-
+    data.date = new Date();
     const news = new News(data);
     news.save()
         .then((result) => res.send(result))

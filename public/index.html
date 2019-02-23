@@ -23,7 +23,7 @@
 
     <div class="one">
        <h2 style="width:280px; display: inline-block">Photo Gallery</h2>
-        <button type="submit" id="addPhoto" class="btn btn-primary">Add Photo</button>
+        <button type="submit" id="addNews" class="btn btn-primary">Add News</button>
     </div>
     <div class="two">
         <button type="submit" id="showLoginForm" class="btn btn-primary" data-toggle="modal" data-target="#modalLoginForm">Login</button>
@@ -109,13 +109,17 @@
                 <!-- content goes here -->
                 <form id="formAdd" name="formData" enctype="multipart/form-data" method="post">
                     <div class="form-group">
-                        <label for="titlePhoto">Title</label>
-                        <input name="title" type="text" id="titlePhoto" class="form-control" required />
+                        <label for="titleNews">Title</label>
+                        <input name="title" type="text" id="titleNews" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="contentNews">Content</label>
+                        <input name="content" type="text" id="contentNews" class="form-control" required />
                     </div>
                     <div class="form-group">
                         <input name="image" id="image" type="file" class="form-control-file" required />
                     </div>
-                    <button type="submit" id="btnAdd" class="btn btn-primary">Send photo</button>
+                    <button type="submit" id="btnAdd" class="btn btn-primary">Create news</button>
                 </form>
 
             </div>
@@ -127,22 +131,9 @@
 </div>
 
 
-<div class="modal fade" id="fullPost" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true" >
-   <!-- <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title" id="lineModalLabelPopUp">Registration form</h3>
-            </div>
-            <div id= "messPopUp" class="modal-body">
+<div class="modal fade" id="fullPost" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true" ></div>
 
 
-            </div>
-            <div class="modal-footer">
-
-            </div>
-        </div>
-    </div>-->
-</div>
 
 
 <div class="wrapper">

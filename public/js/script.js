@@ -4,14 +4,6 @@ let msgList;
 
 $(() => {
 
-    mytest =(event) => {
-
-
-            event.preventDefault();
-            alert('rrrr');
-
-
-    };
 
     let  user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')): null;
     let header=null;
@@ -20,7 +12,7 @@ $(() => {
     msgList = $('#msgList');
     let formLoginModal = $("#formLoginModal");
     let formRegistrationModal = $("#formRegistrationModal");
-    let formAddModal = $("#formAddModal");
+    let formAddNews = $("#formAddNews");
 
 
     let fullPost = $("#fullPost");
@@ -32,12 +24,12 @@ $(() => {
     });
 
 
-    $("#addPhoto").click((e)=>{
+    $("#addNews").click((e)=>{
         e.preventDefault();
-        formAddModal.modal('show');
+        formAddNews.modal('show');
     });
 
-    formAddModal.on('hidden.bs.modal', function() {
+    formAddNews.on('hidden.bs.modal', function() {
         $(this).find("input,textarea,select").val('').end();
 
     });
@@ -91,6 +83,8 @@ $(() => {
             let date = $(`<p  name="date" id="date${data[i]._id}">`).text("Date: " + data[i].date);
 
             let readFullPost = $(`<a  href="" name="fullPost" id="fullPost${data[i]._id}">`).text("Read full post >>");
+
+
 
 
             let image = $('<img class="rounded float-left img-thumbnail">');
@@ -184,9 +178,37 @@ $(() => {
 
                         //let divName = $('<div class="message-author">').append(title);
                         let divText = $('<div class="message-text">').append(content, date);
-
-
                         let allComments = $(`<div id="" style='display: inline-block'>`);
+                        let formComment = $(`<form >`+
+                                        `<div class="form-group"><label for="exampleInputEmail1">Your comment</label>`+
+                                            `<input type="text" class="form-control" id="commentInput${responce._id}" aria-describedby="emailHelp" >`+
+                                        `</div>`+
+
+                                        `<button id="addComment${responce._id}" type="submit" class="btn btn-primary">Submit</button>`+
+                                     `</form>`);
+
+                        $('body').on('click', `#addComment${responce._id}`, (e)=>{
+                            e.preventDefault();
+                            let data = new FormData();
+                            data.append('newsId', responce._id);
+                            let com = $(`#commentInput${responce._id}`).val();
+                            data.append('comment', com);
+
+                            $.ajax({
+                                headers: header,
+                                url: baseURL + 'comments/',
+                                type: 'POST',
+                                data: data,
+                                processData: false,
+                                contentType: false
+                            })
+                                .then(result =>{
+                                    console.log(result);
+                                });
+                        });
+
+
+
                         $.ajax({
                             headers: header,
                             url: baseURL + 'comments/?news_id=' + responce._id,
@@ -194,50 +216,44 @@ $(() => {
                             processData: false,
                             contentType: false
                         })
-                            .then(comments =>{
+                        .then(comments =>{
+
+                            console.log(comments);
+                            comments.forEach((element) => {
+                                let listComments = $(`<div id="comment${element._id}" style='display: block'>`);
+                                let comment = $(`<p  name="comment" id="popcomment${element._id}">`).html("Author: " + element.author + "<br>" +element.comment);
 
 
-                                        comments.forEach((element) => {
-                                            let listComments = $(`<div id="comment${element._id}" style='display: block'>`);
-                                            let comment = $(`<p  name="comment" id="popcomment${element._id}">`).html("Author: " + element.author + "<br>" +element.comment);
+                                listComments.append('<br>', comment);
+
+                                if (user !== null && user.role === 'admin') {
+                                    let delComment = $(`<a href="" id="delComment${element._id}" >`).text("DELETE Comment");
+                                    listComments.append(delComment);
+                                }
 
 
-                                            listComments.append('<br>', comment);
+                                $(`body`).on('click', `#delComment${element._id}`, (e) =>{
+                                    e.preventDefault();
+                                    $.ajax({
+                                        headers: header,
+                                        url: baseURL + 'comments/' + element._id,
+                                        type: 'DELETE',
+                                        processData: false,
+                                        contentType: false
+                                    })
+                                        .then(() =>{
+                                            $(`#comment${element._id}`).hide();
+                                        })
 
-                                            if (user !== null && user.role === 'admin') {
-                                                let delComment = $(`<a href="" id="delComment${element._id}" >`).text("DELETE Comment");
+                                });
 
-
-                                                listComments.append(delComment);
-
-                                            }
-
-
-                                            $(`body`).on('click', `#delComment${element._id}`, (e) =>{
-                                                e.preventDefault();
-                                                $.ajax({
-                                                    headers: header,
-                                                    url: baseURL + 'comments/' + element._id,
-                                                    type: 'DELETE',
-                                                    processData: false,
-                                                    contentType: false
-                                                })
-                                                    .then(() =>{
-                                                        $(`#comment${element._id}`).hide();
-                                                    })
-
-                                            });
-
-
-
-                                            allComments.append(listComments);
-
-                                        });
-
+                                allComments.append(listComments);
 
                             });
-                //list += '</ul>';
-                        div2.append(imgDiv, /*divName,*/ divText, '<br>', allComments);
+
+                        });
+
+                        div2.append(imgDiv,  divText, '<br>', formComment, allComments);
 
                         modalContent.append(div2);
                         modalContent.append(modalFooter);
@@ -263,12 +279,12 @@ $(() => {
             $( "#showLoginForm" ).hide();
             $( "#showRegistrationForm" ).hide();
             $( "#btnLogout" ).show();
-            $('#addPhoto').show();
+            $('#addNews').show();
 
         }
         else{
             header= null;
-            $('#addPhoto').hide();
+            $('#addNews').hide();
             $( "#btnLogout" ).hide();
             $( "#showLoginForm" ).show();
             $( "#showRegistrationForm" ).show();
@@ -340,10 +356,10 @@ $(() => {
         e.preventDefault();
 
         const data = new FormData(document.getElementById('formAdd'));
-        data.append('user', user.name);
+        //data.append('user', user.name);
 
         $.ajax({
-            url: 'http://localhost:8000/photos/',
+            url: 'http://localhost:8000/news/',
             data: data,
             headers: header,
             processData: false,
